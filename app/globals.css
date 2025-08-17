@@ -1,0 +1,193 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Actualizando a colores estilo McDonald's con rojo vibrante y amarillo */
+  --background: #ffffff;
+  --foreground: #dc2626; /* Rojo McDonald's */
+  --card: #f9fafb;
+  --card-foreground: #4b5563;
+  --popover: #ffffff;
+  --popover-foreground: #dc2626;
+  --primary: #dc2626; /* Rojo vibrante principal */
+  --primary-foreground: #ffffff;
+  --secondary: #f59e0b; /* Amarillo McDonald's */
+  --secondary-foreground: #1f2937;
+  --muted: #f9fafb;
+  --muted-foreground: #4b5563;
+  --accent: #f59e0b; /* Amarillo para acentos */
+  --accent-foreground: #1f2937;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #ffffff;
+  --ring: rgba(220, 38, 38, 0.5);
+  --chart-1: #dc2626;
+  --chart-2: #f59e0b;
+  --chart-3: #ffffff;
+  --chart-4: #4b5563;
+  --chart-5: #e5e7eb;
+  --radius: 0.5rem;
+  --sidebar: #f9fafb;
+  --sidebar-foreground: #4b5563;
+  --sidebar-primary: #dc2626;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f59e0b;
+  --sidebar-accent-foreground: #1f2937;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: rgba(220, 38, 38, 0.5);
+  --font-poppins: "Poppins";
+  --font-montserrat: "Montserrat";
+}
+
+.dark {
+  /* Modo oscuro con colores McDonald's ajustados */
+  --background: #1f2937;
+  --foreground: #f9fafb;
+  --card: #374151;
+  --card-foreground: #f9fafb;
+  --popover: #374151;
+  --popover-foreground: #f9fafb;
+  --primary: #dc2626;
+  --primary-foreground: #ffffff;
+  --secondary: #f59e0b;
+  --secondary-foreground: #1f2937;
+  --muted: #4b5563;
+  --muted-foreground: #d1d5db;
+  --accent: #f59e0b;
+  --accent-foreground: #1f2937;
+  --destructive: #dc2626;
+  --destructive-foreground: #f9fafb;
+  --border: #4b5563;
+  --input: #374151;
+  --ring: rgba(220, 38, 38, 0.5);
+  --chart-1: #dc2626;
+  --chart-2: #f59e0b;
+  --chart-3: #ffffff;
+  --chart-4: #4b5563;
+  --chart-5: #e5e7eb;
+  --sidebar: #374151;
+  --sidebar-foreground: #f9fafb;
+  --sidebar-primary: #dc2626;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f59e0b;
+  --sidebar-accent-foreground: #1f2937;
+  --sidebar-border: #4b5563;
+  --sidebar-ring: rgba(220, 38, 38, 0.5);
+}
+
+@theme inline {
+  /* Cambiando a fuentes estilo McDonald's */
+  --font-sans: var(--font-poppins);
+  --font-serif: var(--font-montserrat);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+/* Agregando animaciones estilo McDonald's súper llamativas */
+@keyframes flashy-bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%,
+  43% {
+    transform: translate3d(0, -15px, 0);
+  }
+  70% {
+    transform: translate3d(0, -7px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes mcdonalds-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(220, 38, 38, 0.5), 0 0 10px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.8), 0 0 30px rgba(245, 158, 11, 0.6), 0 0 40px rgba(220, 38, 38, 0.4);
+  }
+}
+
+@keyframes santiago-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.flashy-bounce {
+  animation: flashy-bounce 2s ease-in-out infinite;
+}
+
+.mcdonalds-glow {
+  animation: mcdonalds-glow 2s ease-in-out infinite;
+}
+
+.santiago-pulse {
+  animation: santiago-pulse 1.5s ease-in-out infinite;
+}
+
+/* Gradientes estilo McDonald's */
+.mcdonalds-gradient {
+  background: linear-gradient(135deg, #dc2626 0%, #f59e0b 100%);
+}
+
+.flashy-gradient {
+  background: linear-gradient(45deg, #dc2626 0%, #f59e0b 50%, #dc2626 100%);
+}
