@@ -1,7 +1,8 @@
 "use client"
 
-import { Bell, Search, Menu, Zap } from "lucide-react"
+import { Bell, Search, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { FlashyLogo } from "./flashy-logo"
 
 interface FlashyHeaderProps {
   onMenuClick: () => void
@@ -19,9 +20,7 @@ export default function FlashyHeader({ onMenuClick, onNotificationClick, notific
           </Button>
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center santiago-pulse">
-              <Zap className="w-5 h-5 text-primary" />
-            </div>
+            <FlashyLogo size="sm" />
             <div>
               <h1 className="text-2xl font-black font-sans tracking-wide">FLASHY</h1>
               <p className="text-sm font-bold opacity-90">Santiago, Chile 🇨🇱</p>

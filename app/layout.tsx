@@ -30,9 +30,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${poppins.variable} ${montserrat.variable} antialiased`}>
-      <head>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
-      </head>
       <body className="font-sans">{children}</body>
     </html>
   )

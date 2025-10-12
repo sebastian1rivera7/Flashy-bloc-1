@@ -19,6 +19,7 @@ interface Offer {
   discountedPrice: string
   rating: number
   image: string
+  discountType: string
 }
 
 interface DiscountCardProps {
@@ -51,7 +52,9 @@ export function DiscountCard({ offer }: DiscountCardProps) {
       <div className="relative">
         <img src={offer.image || "/placeholder.svg"} alt={offer.business} className="w-full h-32 object-cover" />
         <div className="absolute top-2 left-2">
-          <Badge className="bg-primary text-primary-foreground font-bold">{offer.discount} OFF</Badge>
+          <Badge className="bg-primary text-primary-foreground font-bold">
+            {offer.discountType === "percentage" ? offer.discount : "AHORRO"}
+          </Badge>
         </div>
         <div className="absolute top-2 right-2">
           <Button
@@ -66,7 +69,7 @@ export function DiscountCard({ offer }: DiscountCardProps) {
         {isUrgent && (
           <div className="absolute bottom-2 left-2">
             <Badge variant="destructive" className="animate-pulse">
-              Ending Soon!
+              ¡Termina Pronto!
             </Badge>
           </div>
         )}
@@ -104,16 +107,16 @@ export function DiscountCard({ offer }: DiscountCardProps) {
             <span className="text-sm text-muted-foreground line-through">{offer.originalPrice}</span>
           </div>
           <div className="text-sm text-muted-foreground">
-            Save{" "}
+            Ahorras{" "}
             {(
-              Number.parseFloat(offer.originalPrice.replace("$", "")) -
-              Number.parseFloat(offer.discountedPrice.replace("$", ""))
-            ).toFixed(2)}
+              Number.parseFloat(offer.originalPrice.replace("$", "").replace(".", "")) -
+              Number.parseFloat(offer.discountedPrice.replace("$", "").replace(".", ""))
+            ).toLocaleString("es-CL", { style: "currency", currency: "CLP" })}
           </div>
         </div>
 
         <Button onClick={handleClaimDeal} className="w-full" variant={isUrgent ? "default" : "outline"}>
-          {isUrgent ? "Claim Now!" : "Get Directions"}
+          {isUrgent ? "¡Reclamar Ahora!" : "Ver Direcciones"}
         </Button>
       </CardContent>
     </Card>

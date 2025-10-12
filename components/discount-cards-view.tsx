@@ -26,12 +26,12 @@ interface DiscountCardsViewProps {
 }
 
 export function DiscountCardsView({ offers, onViewChange }: DiscountCardsViewProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("All")
+  const [selectedCategory, setSelectedCategory] = useState<string>("Todas")
   const [sortBy, setSortBy] = useState<"distance" | "discount" | "time">("distance")
 
-  const categories = ["All", ...Array.from(new Set(offers.map((offer) => offer.category)))]
+  const categories = ["Todas", ...Array.from(new Set(offers.map((offer) => offer.category)))]
 
-  const filteredOffers = offers.filter((offer) => selectedCategory === "All" || offer.category === selectedCategory)
+  const filteredOffers = offers.filter((offer) => selectedCategory === "Todas" || offer.category === selectedCategory)
 
   const sortedOffers = [...filteredOffers].sort((a, b) => {
     switch (sortBy) {
@@ -51,7 +51,7 @@ export function DiscountCardsView({ offers, onViewChange }: DiscountCardsViewPro
       {/* Header Controls */}
       <div className="p-4 border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-foreground">{filteredOffers.length} Deals Near You</h2>
+          <h2 className="text-lg font-semibold text-foreground">{filteredOffers.length} Ofertas Cerca de Ti</h2>
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -61,11 +61,11 @@ export function DiscountCardsView({ offers, onViewChange }: DiscountCardsViewPro
               }
             >
               <SlidersHorizontal className="w-4 h-4 mr-1" />
-              {sortBy === "distance" ? "Distance" : sortBy === "discount" ? "Discount" : "Time"}
+              {sortBy === "distance" ? "Distancia" : sortBy === "discount" ? "Descuento" : "Tiempo"}
             </Button>
             <Button variant="outline" size="sm" onClick={onViewChange}>
               <Map className="w-4 h-4 mr-1" />
-              Map
+              Mapa
             </Button>
           </div>
         </div>

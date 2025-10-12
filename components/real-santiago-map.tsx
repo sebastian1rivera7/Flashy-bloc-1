@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { MapPin, Star, Clock, Zap } from "lucide-react"
-import type { google } from "google-maps"
 
 const santiagoBusinesses = [
   {
@@ -56,60 +55,54 @@ const santiagoBusinesses = [
 ]
 
 export function RealSantiagoMap() {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [map, setMap] = useState<google.maps.Map | null>(null)
   const [selectedBusiness, setSelectedBusiness] = useState<(typeof santiagoBusinesses)[0] | null>(null)
-
-  useEffect(() => {
-    if (!mapRef.current || !window.google) return
-
-    const mapInstance = new window.google.maps.Map(mapRef.current, {
-      center: { lat: -33.4489, lng: -70.6693 }, // Centro de Santiago
-      zoom: 12,
-      styles: [
-        {
-          featureType: "poi",
-          elementType: "labels",
-          stylers: [{ visibility: "off" }],
-        },
-        {
-          featureType: "transit",
-          elementType: "labels",
-          stylers: [{ visibility: "off" }],
-        },
-      ],
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: false,
-    })
-
-    setMap(mapInstance)
-
-    santiagoBusinesses.forEach((business) => {
-      const marker = new window.google.maps.Marker({
-        position: { lat: business.lat, lng: business.lng },
-        map: mapInstance,
-        title: business.name,
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="20" cy="20" r="18" fill="${business.urgent ? "#dc2626" : "#f59e0b"}" stroke="white" strokeWidth="2"/>
-              <text x="20" y="25" textAnchor="middle" fill="white" fontFamily="Poppins" fontWeight="bold" fontSize="10">${business.discount}</text>
-            </svg>
-          `)}`,
-          scaledSize: new window.google.maps.Size(40, 40),
-        },
-      })
-
-      marker.addListener("click", () => {
-        setSelectedBusiness(business)
-      })
-    })
-  }, [])
 
   return (
     <div className="relative w-full h-full">
-      <div ref={mapRef} className="w-full h-full rounded-lg" />
+      {/* Simulated Santiago Map Background */}
+      <div
+        className="w-full h-full rounded-lg bg-gradient-to-br from-green-100 via-blue-50 to-green-200 relative overflow-hidden"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+            linear-gradient(45deg, rgba(156, 163, 175, 0.1) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(156, 163, 175, 0.1) 25%, transparent 25%)
+          `,
+          backgroundSize: "40px 40px, 40px 40px, 20px 20px, 20px 20px",
+        }}
+      >
+        {/* Santiago Streets Simulation */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/3 left-0 right-0 h-1 bg-gray-300 opacity-60"></div>
+          <div className="absolute top-2/3 left-0 right-0 h-1 bg-gray-300 opacity-60"></div>
+          <div className="absolute left-1/4 top-0 bottom-0 w-1 bg-gray-300 opacity-60"></div>
+          <div className="absolute left-3/4 top-0 bottom-0 w-1 bg-gray-300 opacity-60"></div>
+        </div>
+
+        {/* Business Markers */}
+        {santiagoBusinesses.map((business, index) => (
+          <button
+            key={business.id}
+            onClick={() => setSelectedBusiness(business)}
+            className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-white shadow-lg flex items-center justify-center font-bold text-xs text-white transition-all duration-300 hover:scale-110 ${
+              business.urgent ? "bg-red-500 animate-pulse santiago-pulse" : "bg-yellow-500 mcdonalds-glow"
+            }`}
+            style={{
+              left: `${25 + index * 15}%`,
+              top: `${30 + index * 10}%`,
+            }}
+          >
+            {business.discount}
+          </button>
+        ))}
+
+        {/* Santiago Landmarks */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-red-600 rounded-full shadow-lg"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-red-600 mt-4 whitespace-nowrap">
+          Plaza de Armas
+        </div>
+      </div>
 
       {selectedBusiness && (
         <div className="absolute bottom-4 left-4 right-4 bg-white rounded-xl shadow-2xl p-4 mcdonalds-glow">
