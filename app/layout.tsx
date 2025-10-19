@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Poppins, Montserrat } from "next/font/google"
 import "./globals.css"
+import { NotificationProvider } from "@/components/notification-provider"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,7 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${poppins.variable} ${montserrat.variable} antialiased`}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <NotificationProvider offers={[]}>{children}</NotificationProvider>
+      </body>
     </html>
   )
 }

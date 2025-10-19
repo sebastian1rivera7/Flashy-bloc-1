@@ -16,7 +16,7 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 interface NotificationProviderProps {
   children: ReactNode
-  offers: Array<{
+  offers?: Array<{
     id: number
     business: string
     discount: string
@@ -26,7 +26,7 @@ interface NotificationProviderProps {
   }>
 }
 
-export function NotificationProvider({ children, offers }: NotificationProviderProps) {
+export function NotificationProvider({ children, offers = [] }: NotificationProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
   // Initialize with sample notifications

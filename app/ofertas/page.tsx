@@ -36,15 +36,146 @@ interface Offer {
   }
 }
 
+const MOCK_OFFERS: Offer[] = [
+  {
+    id: "1",
+    title: "2x1 en Empanadas",
+    description: "Lleva 2 empanadas y paga solo 1. Válido en todas las variedades.",
+    discount_type: "percentage",
+    discount_value: 50,
+    max_redemptions: 20,
+    current_redemptions: 12,
+    duration_minutes: 45,
+    radius_km: 2,
+    is_active: true,
+    expires_at: new Date(Date.now() + 45 * 60000).toISOString(),
+    created_at: new Date().toISOString(),
+    latitude: -33.4372,
+    longitude: -70.6506,
+    image_url: "/empanadas-chilenas.jpg",
+    qr_code: "FLASHY-EMP-001",
+    business_profiles: {
+      business_name: "Empanadas La Chilena",
+      business_type: "Comida Rápida",
+      logo_url: "/logo-empanadas.jpg",
+      address: "Av. Providencia 1234, Santiago",
+      phone: "+56 2 2345 6789",
+    },
+  },
+  {
+    id: "2",
+    title: "Completo + Bebida $2.500",
+    description: "Completo italiano con bebida incluida por solo $2.500",
+    discount_type: "fixed_amount",
+    discount_value: 1500,
+    max_redemptions: 30,
+    current_redemptions: 18,
+    duration_minutes: 120,
+    radius_km: 3,
+    is_active: true,
+    expires_at: new Date(Date.now() + 120 * 60000).toISOString(),
+    created_at: new Date().toISOString(),
+    latitude: -33.4489,
+    longitude: -70.6693,
+    image_url: "/completo-italiano.jpg",
+    qr_code: "FLASHY-COM-002",
+    business_profiles: {
+      business_name: "Completos El Rápido",
+      business_type: "Comida Rápida",
+      logo_url: "/logo-completos.jpg",
+      address: "Av. Libertador Bernardo O'Higgins 2345, Santiago",
+      phone: "+56 2 3456 7890",
+    },
+  },
+  {
+    id: "3",
+    title: "30% OFF en Café",
+    description: "Descuento del 30% en todos los cafés y bebidas calientes",
+    discount_type: "percentage",
+    discount_value: 30,
+    max_redemptions: 50,
+    current_redemptions: 35,
+    duration_minutes: 90,
+    radius_km: 1.5,
+    is_active: true,
+    expires_at: new Date(Date.now() + 90 * 60000).toISOString(),
+    created_at: new Date().toISOString(),
+    latitude: -33.425,
+    longitude: -70.61,
+    image_url: "/cafe-latte-art.jpg",
+    qr_code: "FLASHY-CAF-003",
+    business_profiles: {
+      business_name: "Café Central",
+      business_type: "Cafetería",
+      logo_url: "/logo-cafe.jpg",
+      address: "Plaza de Armas 567, Santiago Centro",
+      phone: "+56 2 4567 8901",
+    },
+  },
+  {
+    id: "4",
+    title: "Pizza Familiar $8.990",
+    description: "Pizza familiar de 3 ingredientes por solo $8.990",
+    discount_type: "fixed_amount",
+    discount_value: 3000,
+    max_redemptions: 15,
+    current_redemptions: 8,
+    duration_minutes: 60,
+    radius_km: 2.5,
+    is_active: true,
+    expires_at: new Date(Date.now() + 60 * 60000).toISOString(),
+    created_at: new Date().toISOString(),
+    latitude: -33.415,
+    longitude: -70.605,
+    image_url: "/pizza-italiana.jpg",
+    qr_code: "FLASHY-PIZ-004",
+    business_profiles: {
+      business_name: "Pizzería Napolitana",
+      business_type: "Restaurante",
+      logo_url: "/logo-pizzeria.jpg",
+      address: "Av. Italia 890, Providencia",
+      phone: "+56 2 5678 9012",
+    },
+  },
+  {
+    id: "5",
+    title: "40% OFF en Sushi",
+    description: "Descuento del 40% en todos los rolls y combos de sushi",
+    discount_type: "percentage",
+    discount_value: 40,
+    max_redemptions: 25,
+    current_redemptions: 20,
+    duration_minutes: 30,
+    radius_km: 2,
+    is_active: true,
+    expires_at: new Date(Date.now() + 30 * 60000).toISOString(),
+    created_at: new Date().toISOString(),
+    latitude: -33.43,
+    longitude: -70.62,
+    image_url: "/assorted-sushi.png",
+    qr_code: "FLASHY-SUS-005",
+    business_profiles: {
+      business_name: "Sushi Express",
+      business_type: "Restaurante",
+      logo_url: "/logo-sushi.jpg",
+      address: "Av. Apoquindo 1234, Las Condes",
+      phone: "+56 2 6789 0123",
+    },
+  },
+]
+
 export default function OfertasPage() {
   const router = useRouter()
   const [nearbyOffers, setNearbyOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
 
   useEffect(() => {
     async function fetchOffers() {
       try {
+        const supabase = createClient()
+
+        console.log("[v0] Obteniendo ofertas desde Supabase...")
+
         const { data: offers, error } = await supabase
           .from("offers")
           .select(`
@@ -62,21 +193,26 @@ export default function OfertasPage() {
           .order("created_at", { ascending: false })
 
         if (error) {
-          console.error("[v0] Error fetching offers:", error)
-          return
+          console.error("[v0] Error de Supabase:", error.message)
+          console.log("[v0] Usando datos de prueba debido a error")
+          setNearbyOffers(MOCK_OFFERS)
+        } else if (offers && offers.length > 0) {
+          console.log("[v0] ✅ Ofertas obtenidas:", offers.length)
+          setNearbyOffers(offers)
+        } else {
+          console.log("[v0] ⚠️ No hay ofertas activas en la base de datos")
+          setNearbyOffers([])
         }
-
-        console.log("[v0] Fetched offers from real database:", offers)
-        setNearbyOffers(offers || [])
       } catch (error) {
-        console.error("[v0] Error:", error)
+        console.error("[v0] Error de conexión:", error)
+        setNearbyOffers(MOCK_OFFERS)
       } finally {
         setLoading(false)
       }
     }
 
     fetchOffers()
-  }, [supabase])
+  }, [])
 
   if (loading) {
     return (
@@ -84,6 +220,36 @@ export default function OfertasPage() {
         <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
         <p className="text-gray-600">Cargando ofertas...</p>
       </div>
+    )
+  }
+
+  if (nearbyOffers.length === 0) {
+    return (
+      <NotificationProvider offers={[]}>
+        <div className="flex flex-col h-screen bg-background">
+          <FlashyHeader
+            onMenuClick={() => router.push("/")}
+            onNotificationClick={() => router.push("/notificaciones")}
+            notificationCount={0}
+          />
+
+          <div className="flex-1 flex flex-col items-center justify-center p-6">
+            <Tag className="w-16 h-16 text-gray-400 mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No hay ofertas disponibles</h2>
+            <p className="text-gray-600 text-center mb-6">
+              Las ofertas aparecerán aquí cuando los negocios las publiquen desde Flashy for Admins
+            </p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-gradient-to-r from-[#FF6B35] to-[#F7931E] hover:opacity-90"
+            >
+              Actualizar
+            </Button>
+          </div>
+
+          <BottomNavigation activeView="cards" />
+        </div>
+      </NotificationProvider>
     )
   }
 

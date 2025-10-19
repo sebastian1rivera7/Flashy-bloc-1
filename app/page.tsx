@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Tag, Bell, User, Zap, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 
 interface Offer {
   id: string
@@ -126,40 +125,31 @@ export default function HomePage() {
   const router = useRouter()
   const [nearbyOffers, setNearbyOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
 
   useEffect(() => {
     async function fetchOffers() {
       try {
-        const { data: offers, error } = await supabase
-          .from("offers")
-          .select(`
-            *,
-            business_profiles (
-              business_name,
-              business_type,
-              logo_url,
-              address,
-              phone
-            )
-          `)
-          .eq("is_active", true)
-          .gt("expires_at", new Date().toISOString())
-          .order("created_at", { ascending: false })
-          .limit(10)
+        console.log("[v0] Obteniendo ofertas desde API route...")
 
-        if (error) {
-          console.log("[v0] Supabase no disponible, usando datos de prueba")
+        const response = await fetch("/api/offers")
+        const data = await response.json()
+
+        if (data.error) {
+          console.error("[v0] Error desde API:", data.error)
+          console.log("[v0] Usando datos de prueba debido a error")
           setNearbyOffers(MOCK_OFFERS)
-        } else if (offers && offers.length > 0) {
-          console.log("[v0] Ofertas obtenidas de Supabase:", offers)
-          setNearbyOffers(offers)
+        } else if (data.offers && data.offers.length > 0) {
+          console.log("[v0] ✅ Ofertas obtenidas:", data.offers.length, "ofertas")
+          console.log("[v0] Primera oferta:", data.offers[0])
+          setNearbyOffers(data.offers)
         } else {
-          console.log("[v0] No hay ofertas en Supabase, usando datos de prueba")
-          setNearbyOffers(MOCK_OFFERS)
+          console.log("[v0] ⚠️ No hay ofertas activas")
+          console.log("[v0] Verifica que Flashy for Admins haya publicado ofertas")
+          setNearbyOffers([])
         }
       } catch (error) {
-        console.log("[v0] Error de conexión, usando datos de prueba")
+        console.error("[v0] Error de conexión:", error)
+        console.log("[v0] Usando datos de prueba debido a error de conexión")
         setNearbyOffers(MOCK_OFFERS)
       } finally {
         setLoading(false)
@@ -167,7 +157,7 @@ export default function HomePage() {
     }
 
     fetchOffers()
-  }, [supabase])
+  }, [])
 
   const navigationOptions = [
     {
@@ -210,6 +200,34 @@ export default function HomePage() {
         <Loader2 className="w-8 h-8 animate-spin text-red-500 mb-4" />
         <p className="text-gray-600">Cargando ofertas...</p>
       </div>
+    )
+  }
+
+  if (nearbyOffers.length === 0) {
+    return (
+      <NotificationProvider offers={[]}>
+        <div className="flex flex-col h-screen bg-gray-50">
+          <FlashyHeader
+            onMenuClick={() => {}}
+            onNotificationClick={() => router.push("/notificaciones")}
+            notificationCount={0}
+          />
+
+          <div className="flex-1 flex flex-col items-center justify-center p-6">
+            <Zap className="w-16 h-16 text-gray-400 mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No hay ofertas disponibles</h2>
+            <p className="text-gray-600 text-center mb-6">
+              Las ofertas aparecerán aquí cuando los negocios las publiquen desde Flashy for Admins
+            </p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+            >
+              Actualizar
+            </Button>
+          </div>
+        </div>
+      </NotificationProvider>
     )
   }
 
