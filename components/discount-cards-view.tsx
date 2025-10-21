@@ -7,17 +7,29 @@ import { Button } from "@/components/ui/button"
 import { Map, SlidersHorizontal } from "lucide-react"
 
 interface Offer {
-  id: number
-  business: string
-  discount: string
-  timeLeft: string
-  distance: string
-  category: string
+  id: string
+  title: string
   description: string
-  originalPrice: string
-  discountedPrice: string
-  rating: number
-  image: string
+  discount_type: string
+  discount_value: number
+  max_redemptions: number
+  current_redemptions: number
+  duration_minutes: number
+  radius_km: number
+  is_active: boolean
+  expires_at: string
+  created_at: string
+  latitude: number
+  longitude: number
+  image_url: string
+  qr_code: string
+  business_profiles: {
+    business_name: string
+    business_type: string
+    logo_url: string
+    address: string
+    phone: string
+  }
 }
 
 interface DiscountCardsViewProps {
@@ -29,18 +41,23 @@ export function DiscountCardsView({ offers, onViewChange }: DiscountCardsViewPro
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas")
   const [sortBy, setSortBy] = useState<"distance" | "discount" | "time">("distance")
 
-  const categories = ["Todas", ...Array.from(new Set(offers.map((offer) => offer.category)))]
+  const categories = ["Todas", ...Array.from(new Set(offers.map((offer) => offer.business_profiles.business_type)))]
 
-  const filteredOffers = offers.filter((offer) => selectedCategory === "Todas" || offer.category === selectedCategory)
+  const filteredOffers = offers.filter(
+    (offer) => selectedCategory === "Todas" || offer.business_profiles.business_type === selectedCategory,
+  )
 
   const sortedOffers = [...filteredOffers].sort((a, b) => {
     switch (sortBy) {
       case "distance":
-        return Number.parseFloat(a.distance) - Number.parseFloat(b.distance)
+        return a.radius_km - b.radius_km
       case "discount":
-        return Number.parseInt(b.discount) - Number.parseInt(a.discount)
-      case "time":
-        return Number.parseInt(a.timeLeft) - Number.parseInt(b.timeLeft)
+        return b.discount_value - a.discount_value
+      case "time": {
+        const timeA = new Date(a.expires_at).getTime() - Date.now()
+        const timeB = new Date(b.expires_at).getTime() - Date.now()
+        return timeA - timeB
+      }
       default:
         return 0
     }

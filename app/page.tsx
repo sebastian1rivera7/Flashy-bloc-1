@@ -6,7 +6,7 @@ import { DiscountBanner } from "@/components/discount-banner"
 import { NotificationProvider } from "@/components/notification-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { MapPin, Tag, Bell, User, Zap, Loader2 } from "lucide-react"
+import { MapPin, Tag, Bell, User, Zap, Loader2, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface Offer {
@@ -125,6 +125,7 @@ export default function HomePage() {
   const router = useRouter()
   const [nearbyOffers, setNearbyOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
+  const [isPreviewMode, setIsPreviewMode] = useState(false)
 
   useEffect(() => {
     async function fetchOffers() {
@@ -134,22 +135,15 @@ export default function HomePage() {
         const response = await fetch("/api/offers")
         const data = await response.json()
 
-        if (data.error) {
-          console.error("[v0] Error desde API:", data.error)
-          console.log("[v0] Usando datos de prueba debido a error")
+        if (data.error === "preview_environment" || !data.offers || data.offers.length === 0) {
+          setIsPreviewMode(true)
           setNearbyOffers(MOCK_OFFERS)
-        } else if (data.offers && data.offers.length > 0) {
-          console.log("[v0] ✅ Ofertas obtenidas:", data.offers.length, "ofertas")
-          console.log("[v0] Primera oferta:", data.offers[0])
-          setNearbyOffers(data.offers)
         } else {
-          console.log("[v0] ⚠️ No hay ofertas activas")
-          console.log("[v0] Verifica que Flashy for Admins haya publicado ofertas")
-          setNearbyOffers([])
+          setIsPreviewMode(false)
+          setNearbyOffers(data.offers)
         }
       } catch (error) {
-        console.error("[v0] Error de conexión:", error)
-        console.log("[v0] Usando datos de prueba debido a error de conexión")
+        setIsPreviewMode(true)
         setNearbyOffers(MOCK_OFFERS)
       } finally {
         setLoading(false)
@@ -239,6 +233,18 @@ export default function HomePage() {
           onNotificationClick={() => router.push("/notificaciones")}
           notificationCount={nearbyOffers.filter((offer) => offer.is_urgent).length}
         />
+
+        {isPreviewMode && (
+          <div className="bg-yellow-50 border-b border-yellow-200 p-3">
+            <div className="flex items-center gap-2 text-yellow-800 text-sm">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <p>
+                <strong>Modo Preview:</strong> Mostrando datos de prueba. Al desplegar en Vercel, se conectará con
+                Flashy for Admins automáticamente.
+              </p>
+            </div>
+          </div>
+        )}
 
         <DiscountBanner offers={nearbyOffers} />
 

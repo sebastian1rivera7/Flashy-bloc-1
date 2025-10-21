@@ -8,7 +8,6 @@ import { NotificationProvider } from "@/components/notification-provider"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Tag, Loader2, QrCode } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 
 interface Offer {
   id: string
@@ -172,40 +171,17 @@ export default function OfertasPage() {
   useEffect(() => {
     async function fetchOffers() {
       try {
-        const supabase = createClient()
+        const response = await fetch("/api/offers")
+        const data = await response.json()
 
-        console.log("[v0] Obteniendo ofertas desde Supabase...")
-
-        const { data: offers, error } = await supabase
-          .from("offers")
-          .select(`
-            *,
-            business_profiles (
-              business_name,
-              business_type,
-              logo_url,
-              address,
-              phone
-            )
-          `)
-          .eq("is_active", true)
-          .gt("expires_at", new Date().toISOString())
-          .order("created_at", { ascending: false })
-
-        if (error) {
-          console.error("[v0] Error de Supabase:", error.message)
-          console.log("[v0] Usando datos de prueba debido a error")
-          setNearbyOffers(MOCK_OFFERS)
-        } else if (offers && offers.length > 0) {
-          console.log("[v0] ✅ Ofertas obtenidas:", offers.length)
-          setNearbyOffers(offers)
+        if (data.offers && data.offers.length > 0) {
+          setNearbyOffers(data.offers)
         } else {
-          console.log("[v0] ⚠️ No hay ofertas activas en la base de datos")
           setNearbyOffers([])
         }
       } catch (error) {
-        console.error("[v0] Error de conexión:", error)
-        setNearbyOffers(MOCK_OFFERS)
+        console.error("[v0] Error obteniendo ofertas:", error)
+        setNearbyOffers([])
       } finally {
         setLoading(false)
       }
